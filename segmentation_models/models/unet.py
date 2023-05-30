@@ -31,7 +31,7 @@ def Conv2dBnReLU(filters, use_batchnorm, name=None):
     kwargs = get_submodules()
 
     def wrapper(input_tensor):
-        return conv2dBn(
+        return Conv2dBn(
             filters,
             kernel_size=3,
             activation='relu',
