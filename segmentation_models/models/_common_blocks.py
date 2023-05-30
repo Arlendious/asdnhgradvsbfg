@@ -1,6 +1,6 @@
 from keras_applications import get_submodules_from_kwargs
 
-def SeparableConv2dBn(
+def Conv2dBn(
         filters,
         kernel_size,
         strides=(1, 1),
