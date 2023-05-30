@@ -1,6 +1,6 @@
 from keras_applications import get_submodules_from_kwargs
 
-from ._common_blocks import SeparableConv2dBn
+from ._common_blocks import Conv2dBn
 from ._utils import freeze_model, filter_keras_submodules
 from ..backbones.backbones_factory import Backbones
 
@@ -27,11 +27,11 @@ def get_submodules():
 #  Blocks
 # ---------------------------------------------------------------------
 
-def SeparableConv2dBnReLU(filters, use_batchnorm, name=None):
+def Conv2dBnReLU(filters, use_batchnorm, name=None):
     kwargs = get_submodules()
 
     def wrapper(input_tensor):
-        return SeparableConv2dBn(
+        return conv2dBn(
             filters,
             kernel_size=3,
             activation='relu',
@@ -59,8 +59,8 @@ def DecoderUpsamplingX2Block(filters, stage, use_batchnorm=False):
         if skip is not None:
             x = layers.Concatenate(axis=concat_axis, name=concat_name)([x, skip])
 
-        x = SeparableConv2dBnReLU(filters, use_batchnorm, name=conv1_name)(x)
-        x = SeparableConv2dBnReLU(filters, use_batchnorm, name=conv2_name)(x)
+        x = Conv2dBnReLU(filters, use_batchnorm, name=conv1_name)(x)
+        x = Conv2dBnReLU(filters, use_batchnorm, name=conv2_name)(x)
 
         return x
 
@@ -95,7 +95,7 @@ def DecoderTransposeX2Block(filters, stage, use_batchnorm=False):
         if skip is not None:
             x = layers.Concatenate(axis=concat_axis, name=concat_name)([x, skip])
 
-        x = SeparableConv2dBnReLU(filters, use_batchnorm, name=conv_block_name)(x)
+        x = Conv2dBnReLU(filters, use_batchnorm, name=conv_block_name)(x)
 
         return x
 
@@ -124,8 +124,8 @@ def build_unet(
 
     # add center block if previous operation was maxpooling (for vgg models)
     if isinstance(backbone.layers[-1], layers.MaxPooling2D):
-        x = SeparableConv2dBnReLU(512, use_batchnorm, name='center_block1')(x)
-        x = SeparableConv2dBnReLU(512, use_batchnorm, name='center_block2')(x)
+        x = Conv2dBnReLU(512, use_batchnorm, name='center_block1')(x)
+        x = Conv2dBnReLU(512, use_batchnorm, name='center_block2')(x)
 
     # building decoder blocks
     for i in range(n_upsample_blocks):
